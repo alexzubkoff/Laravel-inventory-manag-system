@@ -85,9 +85,9 @@
                 <div class="links">
                     <a href="/goods">Товары</a>
                     <a href="/counterparties">Контрагенты</a>
-                    <a href="#">Запасы</a>
-                    <a href="#">Приходный ордер</a>
-                    <a href="#">Расходный ордер</a>
+                    {{--<a href="#">Запасы</a>--}}
+                    <a href="/orderreceipt">Приходный ордер</a>
+                    <a href="/orderwithdrawal">Расходный ордер</a>
                     <a href="#">Отчет</a>
                 </div>
             </div>

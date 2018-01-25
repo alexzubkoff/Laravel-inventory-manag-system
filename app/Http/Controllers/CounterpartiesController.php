@@ -29,9 +29,13 @@ class CounterpartiesController extends Controller
             $counterparty= DB::select('select * from counterparties where id = ?', [$id]);
             return view('counterparties_update_view',['counterparty'=>(array)$counterparty[0]]);
         }else{
+            $type = (string)$request->input('type');
+            $name = (string)$request->input('name');
+            $phonenumber = (string)$request->input('phonenumber');
+            $email = (string)$request->input('email');
             DB::table('counterparties')
                 ->where('id', $id)
-                ->update(['type' => $request->type,'name' => $request->name,'phonenumber' => $request->phonenumber,'email' => $request->email]);
+                ->update(['type' => $type,'name' => $name,'phonenumber' => $phonenumber,'email' => $email]);
             return redirect('/counterparties');
         }
     }

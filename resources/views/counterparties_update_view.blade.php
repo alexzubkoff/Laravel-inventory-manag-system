@@ -12,7 +12,7 @@
         <tr>
         <td>Тип</td>
         <td><input type="radio" name="type" value="provider"> Поставщик<Br>
-            <input type="radio" name="type" value="buyer"> Полкупатель<Br>
+            <input type="radio" name="type" value="buyer"> Покупатель<Br>
         </td>
         </tr>
         <tr>
@@ -21,11 +21,11 @@
         </tr>
         <tr>
             <td>Телефон</td>
-            <td><input type="text" name="quantity"value="<?php echo $counterparty['phonenumber'];?>" /></td>
+            <td><input type="tel" name="phonenumber"value="<?php echo $counterparty['phonenumber'];?>" /></td>
         </tr>
         <tr>
             <td>e-mail</td>
-            <td><input type="text" name="price" value="<?php echo $counterparty['email'];?>"/></td>
+            <td><input type="email" name="email" value="<?php echo $counterparty['email'];?>"/></td>
         </tr>
         <tr>
             <td colspan="2" align="center"><input type="submit" value="Изменить" /></td>

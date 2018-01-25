@@ -13,7 +13,7 @@
         <tr>
             <td>Тип</td>
             <td><input type="radio" name="type" value="provider"> Поставщик<Br>
-                <input type="radio" name="type" value="buyer"> Полкупатель<Br>
+                <input type="radio" name="type" value="buyer"> Покупатель<Br>
             </td>
         </tr>
         <tr>
