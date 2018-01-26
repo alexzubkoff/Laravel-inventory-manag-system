@@ -32,11 +32,11 @@ Route::get('/counterparties/delete/{id}','CounterpartiesController@delete');
 Route::get('/orderreceipt','OrderReceiptController@index');
 Route::get('/orderreceipt/create','OrderReceiptController@create');
 Route::post('/orderreceipt/create','OrderReceiptController@create');
-Route::get('/orderreceipt/delete/{id}','OrderReceiptController@delete');
+Route::get('/orderreceipt/delete/{id}/{goodid}/{orderreceipt}/{price}','OrderReceiptController@delete');
 
 
 Route::get('/orderwithdrawal','OrderWithDrawalController@index');
 Route::get('/orderwithdrawal/create','OrderWithDrawalController@create');
 Route::post('/orderwithdrawal/create','OrderWithDrawalController@create');
-Route::get('/orderwithdrawal/delete/{id}','OrderWithDrawalController@delete');
+Route::get('/orderwithdrawal/delete/{id}/{goodid}/{orderreceipt}/{price}','OrderWithDrawalController@delete');
 

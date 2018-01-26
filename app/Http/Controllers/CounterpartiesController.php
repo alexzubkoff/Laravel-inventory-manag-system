@@ -11,7 +11,6 @@ class CounterpartiesController extends Controller
         $counterparties = DB::select('select * from counterparties');
         return view('counterparties_view',['counterparties'=>$counterparties]);
     }
-
     public function create(Request $request)
     {
         if ($request->method()=="GET"){

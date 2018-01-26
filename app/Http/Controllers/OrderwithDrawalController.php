@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 
-class OrderReceiptController extends Controller
+class OrderwithDrawalController extends Controller
 {
     private $request;
     private $id;
@@ -14,27 +14,27 @@ class OrderReceiptController extends Controller
 
     public function index()
     {
-        $orderreceipts = DB::select('
+        $orderwithdrawal = DB::select('
                       select
-                            orderreceipt.id as orderID,
+                            orderwithdrawal.id as orderID,
                             goods.id as goodID,
                             goods.name as name,
                             goods.quantity as balancebegin,
-                            orderreceipt.quantity as orderreceipt,
-                            orderreceipt.price,
-                            orderreceipt.quantity*orderreceipt.price as totalSum,
-                            counterparties.name as provider,
+                            orderwithdrawal.quantity as orderwithdrawal,
+                            orderwithdrawal.price,
+                            orderwithdrawal.quantity*orderwithdrawal.price as totalSum,
+                            counterparties.name as buyer,
                             counterparties.phonenumber,
                             counterparties.email,
-                            orderreceipt.dateReceipt 
-                      from orderreceipt
+                            orderwithdrawal.dateWithdrawal 
+                      from orderwithdrawal
                       inner join counterparties
-                      on orderreceipt.counterpartyId = counterparties.id
-                      inner join orderreceiptgoods
-                      on orderreceiptgoods.orderreceiptId = orderreceipt.id
+                      on orderwithdrawal.counterpartyId = counterparties.id
+                      inner join orderwithdrawalgoods
+                      on orderwithdrawalgoods.orderwithdrawalId =orderwithdrawal.id
                       inner join goods 
-                      on orderreceiptgoods.goodId = goods.id');
-        return view('orderreceipt_view',['orderreceipts'=>$orderreceipts]);
+                      on orderwithdrawalgoods.goodId = goods.id');
+        return view('orderwithdrawal_view',['orderwithdrawals'=>$orderwithdrawal]);
     }
 
     public function create(Request $request)
@@ -42,9 +42,9 @@ class OrderReceiptController extends Controller
         $this->request = $request;
 
         if ($request->method()=="GET"){
-            $suppliers = DB::select('select id,name from counterparties where type = "provider"');
+            $suppliers = DB::select('select id,name from counterparties where type = "buyer"');
             $goods = DB::select('select id,name from goods');
-            return view('orderreceipt_create_view',['suppliers'=>$suppliers,'goods'=>$goods]);
+            return view('orderwithdrawal_create_view',['suppliers'=>$suppliers,'goods'=>$goods]);
         }else{
 
             DB::transaction(function () {
@@ -96,7 +96,7 @@ class OrderReceiptController extends Controller
             }
         });
 
-            return redirect('/orderreceipt');
+        return redirect('/orderreceipt');
     }
 
 }

@@ -9,7 +9,7 @@
             <td>ID</td>
             <td>Наименование</td>
             <td>Остаток</td>
-            <td>Проиход</td>
+            <td>Приход</td>
             <td>Цена</td>
             <td>Сумма</td>
             <td>Поставщик</td>
@@ -29,7 +29,7 @@
                 <td>{{ $orderreceipt->phonenumber}}</td>
                 <td>{{ $orderreceipt->email }}</td>
                 <td>{{ $orderreceipt->dateReceipt }}</td>
-                <td><a href="/orderreceipt/delete/{{ $orderreceipt->orderID}}">Удалить</a></td>
+                <td><a href="/orderreceipt/delete/{{ $orderreceipt->orderID}}/{{ $orderreceipt->goodID }}/{{ $orderreceipt->orderreceipt }}/{{$orderreceipt->price}}">Удалить</a></td>
             </tr>
         @endforeach
 </table>
