@@ -9,91 +9,66 @@ class OrderReceiptController extends Controller
     private $request;
     private $id;
     private $goodId;
-    private $orderreceipt;
-    private $goodPrice;
 
     public function index()
     {
         $orderreceipts = DB::select('
-                      select
-                            orderreceipt.id as orderID,
-                            goods.id as goodID,
-                            goods.name as name,
-                            goods.quantity as balancebegin,
-                            orderreceipt.quantity as orderreceipt,
-                            orderreceipt.price,
-                            orderreceipt.quantity*orderreceipt.price as totalSum,
-                            counterparties.name as provider,
-                            counterparties.phonenumber,
-                            counterparties.email,
-                            orderreceipt.dateReceipt 
-                      from orderreceipt
-                      inner join counterparties
-                      on orderreceipt.counterpartyId = counterparties.id
-                      inner join orderreceiptgoods
-                      on orderreceiptgoods.orderreceiptId = orderreceipt.id
-                      inner join goods 
-                      on orderreceiptgoods.goodId = goods.id');
-        return view('orderreceipt_view',['orderreceipts'=>$orderreceipts]);
+                                SELECT purchases.id as purchaseId,goods.id as productId,goods.name as productName,goods.price,purchases.stockBalance,purchases.purchaseQuantity,counterparties.name as provider,
+                                counterparties.phonenumber,counterparties.email,purchases.purchaseDate FROM goods
+                                INNER JOIN purchases ON goods.id=purchases.productId INNER JOIN counterparties
+                                ON purchases.counterpartyId=counterparties.id 
+                                 ');
+
+        $suppliers = DB::select('select id,name from counterparties where type = "provider"');
+
+        return view('orderreceipt_view',['orderreceipts'=>$orderreceipts,'suppliers'=>$suppliers]);
     }
 
     public function create(Request $request)
     {
         $this->request = $request;
 
-        if ($request->method()=="GET"){
-            $suppliers = DB::select('select id,name from counterparties where type = "provider"');
-            $goods = DB::select('select id,name from goods');
-            return view('orderreceipt_create_view',['suppliers'=>$suppliers,'goods'=>$goods]);
-        }else{
-
             DB::transaction(function () {
-                DB::insert('insert into orderreceipt (counterpartyId,dateReceipt,quantity,price,totalSum) values (?, ?, ?, ?, ?)',
-                    [$this->request->input("supplierslist"),date("Y-m-d H:i:s"), $this->request->input("quantity"),$this->request->input("price"),$this->request->input("totalSum")]);
 
-                $id = DB::select('SELECT MAX(id) as maxId FROM orderreceipt');
-                $id = (array)$id[0];
+                $good = DB::select('select * from goods where name=?',[$this->request->name]);
 
-                DB::insert('insert into orderreceiptgoods (orderreceiptId,goodId) values (?, ?)',
-                    [$id ['maxId'], $this->request->input("goodslist")]);
+                if (empty($good)){
+                    DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$this->request->name, $this->request->quantity,$this->request->price]);
 
-                $good = DB::select('select * from goods where id = ?',[$this->request->input("goodslist")]);
+                    $id = DB::select('SELECT MAX(id) as maxId FROM goods');
+                    $id = (array)$id[0];
 
-                $goodArr = (array)$good[0];
-                $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
-                DB::table('goods')
-                    ->where('id', $this->request->input("goodslist"))
-                    ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->input('price')]);
+                    DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
+                        [$this->request->input("supplierslist"),$id['maxId'],$this->request->quantity, date("Y-m-d H:i:s")]);
+                }else {
+                    $goodArr = (array)$good[0];
+                    $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
+                    DB::table('goods')
+                        ->where('id', $goodArr['id'])
+                        ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
+                    DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
+                    DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
+                        [$this->request->input("supplierslist"),$goodArr['id'],(int)$goodArr['quantity'],$this->request->quantity, date("Y-m-d H:i:s")]);
+
+                }
+
             });
 
-        }
+
         return redirect('/orderreceipt');
 
     }
 
-    public function delete($id,$goodid,$orderreceipt,$goodPrice)
+    public function delete($purchaseId,$productId)
     {
-        $this->id = $id;
-        $this->goodId = $goodid;
-        $this->orderreceipt = $orderreceipt;
-        $this->goodPrice = $goodPrice;
+        $this->id = $purchaseId;
+        $this->goodId = $productId;
 
         DB::transaction(function () {
+            DB::delete('delete from purchases where id = ?',[$this->id]);
+            DB::delete('delete from goods where id = ?',[$this->goodId]);
 
-            DB::delete('delete from orderreceiptgoods where orderreceiptId = ? and goodid = ?',[$this->id,$this->goodId]);
-            DB::delete('delete from orderreceipt where id = ?',[$this->id]);
 
-            $good = DB::select('select * from goods where id = ?',[$this->goodId]);
-            $goodArr = (array)$good[0];
-
-            if ($goodArr['quantity']>1){
-                $goodArr['quantity'] = $goodArr['quantity'] - $this->orderreceipt;
-                DB::table('goods')
-                    ->where('id', $this->goodId)
-                    ->update(['quantity' =>  $goodArr['quantity'],'price' => $this->goodPrice]);
-            }else{
-                DB::delete('delete from goods where id = ?',[$this->id]);
-            }
         });
 
             return redirect('/orderreceipt');

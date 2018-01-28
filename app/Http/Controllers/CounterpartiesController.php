@@ -13,13 +13,8 @@ class CounterpartiesController extends Controller
     }
     public function create(Request $request)
     {
-        if ($request->method()=="GET"){
-            return view('counterparties_create_view');
-        }else{
             DB::insert('insert into counterparties (type,name,phonenumber,email) values (?, ?,?,?)', [$request->type, $request->name,$request->phonenumber,$request->email]);
             return redirect('/counterparties');
-        }
-
     }
 
     public function update(Request $request,$id)

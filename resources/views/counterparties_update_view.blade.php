@@ -29,6 +29,7 @@
         </tr>
         <tr>
             <td colspan="2" align="center"><input type="submit" value="Изменить" /></td>
+            <td colspan="2" align="center" ><input id="cancel"  type="reset" value="Отменить" /></td>
         </tr>
     </table>
 </form>

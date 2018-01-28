@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 
+
+
 class GoodsController extends Controller
 {
+
     public function index()
     {
         $goods = DB::select('select * from goods');
@@ -14,13 +17,9 @@ class GoodsController extends Controller
 
     public function create(Request $request)
     {
-        if ($request->method()=="GET"){
-            return view('goods_create_view');
-        }else{
-            DB::insert('insert into goods (name,quantity,price) values (?, ?,?)', [$request->name, $request->quantity,$request->price]);
-            return redirect('/goods');
-        }
 
+        DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$request->name, $request->quantity,$request->price]);
+        return redirect('/goods');
     }
 
     public function update(Request $request,$id)
