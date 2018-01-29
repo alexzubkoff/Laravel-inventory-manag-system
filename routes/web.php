@@ -15,6 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/goodslist','GoodslistController@index');
+Route::get('/goodslist/update/{id}','GoodslistController@update');
+Route::post('/goodslist/update/{id}','GoodslistController@update');
+Route::get('/goodslist/delete/{id}','GoodslistController@delete');
+Route::post('/goodslist/create','GoodslistController@create');
+Route::get('autocomplete',array('as'=>'autocomplete','uses'=> 'GoodslistController@autocomplete'));
+//Route::get('/goodslist/autocomplete','GoodslistController@autocomplete');
+
 Route::get('/goods','GoodsController@index');
 Route::get('/goods/update/{id}','GoodsController@update');
 Route::post('/goods/update/{id}','GoodsController@update');

@@ -4,7 +4,6 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>Inventory management system</title>
 
         <!-- Fonts -->
@@ -83,7 +82,8 @@
                 </div>
 
                 <div class="links">
-                    <a href="/goods">Товары</a>
+                    <a href="/goodslist">Товары</a>
+                    <a href="/goods">Запасы</a>
                     <a href="/counterparties">Контрагенты</a>
                     <a href="/orderreceipt">Приходный ордер</a>
                     <a href="/orderwithdrawal">Расходный ордер</a>

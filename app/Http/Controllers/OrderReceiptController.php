@@ -28,35 +28,66 @@ class OrderReceiptController extends Controller
     {
         $this->request = $request;
 
-        var_dump($this->request->goodsarr);
-        exit();
+           DB::transaction(function () {
 
-            DB::transaction(function () {
+               $goodsarr = json_decode($this->request->goodsarr, true);
 
-                $good = DB::select('select * from goods where name=?',[$this->request->name]);
+              if (!empty($goodsarr)) {
+                  foreach ($goodsarr as $product){
+                      //echo $good['name'].$good['quantity'].$good['price'].'/n';
 
-                if (empty($good)){
-                    DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$this->request->name, $this->request->quantity,$this->request->price]);
+                      $good = DB::select('select * from goods where name=?',[$product['name']]);
 
-                    $id = DB::select('SELECT MAX(id) as maxId FROM goods');
-                    $id = (array)$id[0];
+                      if (empty($good)){
+                          DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$product['name'], $product['quantity'],$product['price']]);
 
-                    DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
-                        [$this->request->input("supplierslist"),$id['maxId'],$this->request->quantity, date("Y-m-d H:i:s")]);
-                }else {
-                    $goodArr = (array)$good[0];
-                    $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
-                    DB::table('goods')
-                        ->where('id', $goodArr['id'])
-                        ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
-                    DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
-                    DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
-                        [$this->request->input("supplierslist"),$goodArr['id'],(int)$goodArr['quantity'],$this->request->quantity, date("Y-m-d H:i:s")]);
+                          $id = DB::select('SELECT MAX(id) as maxId FROM goods');
+                          $id = (array)$id[0];
 
-                }
+                          DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
+                              [$product['provider'],$id['maxId'],$product['quantity'], date("Y-m-d H:i:s")]);
+                      }else {
+                          $goodArr = (array)$good[0];
+                          $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
+                          DB::table('goods')
+                              ->where('id', $goodArr['id'])
+                              ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
+                          DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
+                          DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
+                              [$product['provider'],$goodArr['id'],(int)$goodArr['quantity'],$product['quantity'], date("Y-m-d H:i:s")]);
+
+                      }
+                  }
+              }else {
+
+                      $good = DB::select('select * from goods where name=?',[$this->request->name]);
+
+                      if (empty($good)){
+                          DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$this->request->name, $this->request->quantity,$this->request->price]);
+
+                          $id = DB::select('SELECT MAX(id) as maxId FROM goods');
+                          $id = (array)$id[0];
+
+                          DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
+                              [$this->request->input("supplierslist"),$id['maxId'],$this->request->quantity, date("Y-m-d H:i:s")]);
+                      }else {
+                          $goodArr = (array)$good[0];
+                          $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
+                          DB::table('goods')
+                              ->where('id', $goodArr['id'])
+                              ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
+                          DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
+                          DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
+                              [$this->request->input("supplierslist"),$goodArr['id'],(int)$goodArr['quantity'],$this->request->quantity, date("Y-m-d H:i:s")]);
+
+                      }
+              }
+
+
+
+
 
             });
-
 
         return redirect('/orderreceipt');
 
