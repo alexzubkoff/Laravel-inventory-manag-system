@@ -47,15 +47,15 @@
         <tr>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" /></td>
+            <td><input type="text" name="name" required /></td>
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input id = "quantity" type="number" min = "1" name="quantity" /></td>
+            <td><input id = "quantity" type="number" min = "1" name="quantity" required /></td>
         </tr>
         <tr>
             <td>Цена</td>
-            <td><input id = "price" type="number" min = "1" name="price" /></td>
+            <td><input id = "price" type="number" min = "1" name="price" required /></td>
         </tr>
         <tr>
             <td colspan="2" align="center" ><input type="submit" value="Сохранить" /></td>

@@ -39,11 +39,11 @@
         <tr>
         <tr>
             <td>Начальная дата</td>
-            <td><input type="date" name="datebegin" /></td>
+            <td><input type="date" name="datebegin" required/></td>
         </tr>
         <tr>
             <td>Конечная дата</td>
-            <td><input type="date"  name="dateend"/></td>
+            <td><input type="date"  name="dateend" required/></td>
         </tr>
         <tr>
             <td colspan="2" align="center" ><input type="submit" value="Сформировать отчет" /></td>

@@ -37,15 +37,15 @@
         </tr>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" /></td>
+            <td><input type="text" name="name" required/></td>
         </tr>
         <tr>
             <td>Телефон</td>
-            <td><input type="tel" name="phonenumber" /></td>
+            <td><input type="tel" name="phonenumber" required/></td>
         </tr>
         <tr>
             <td>e-mail</td>
-            <td><input type="email"  name="email" /></td>
+            <td><input type="email"  name="email" required/></td>
         </tr>
         <tr>
             <td colspan="2" align="center" ><input type="submit" value="Добавить" /></td>
