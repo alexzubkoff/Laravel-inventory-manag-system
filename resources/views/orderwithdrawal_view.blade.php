@@ -55,11 +55,11 @@
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input id = "quantity" type="number" min = "1"  name="quantity" required /></td>
+            <td><input id = "quantity" type="number" min = "1"  name="quantity" required/></td>
         </tr>
         <tr>
             <td>Цена</td>
-            <td><input id = "price" type="number" min = "1" name="price" required /></td>
+            <td><input id = "price" type="number" min = "1" name="price" required/></td>
         </tr>
 
         <tr>

@@ -39,7 +39,7 @@
         <tr>
         <tr>
             <td>Начальная дата</td>
-            <td><input type="date" name="datebegin" required/></td>
+            <td><input type="date" name="datebegin" required /></td>
         </tr>
         <tr>
             <td>Конечная дата</td>
