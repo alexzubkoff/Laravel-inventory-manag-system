@@ -11,15 +11,15 @@
     <table>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" value="<?php echo $good['name'];?>"/></td>
+            <td><input type="text" name="name" value="<?php echo $good['name'];?>"required/></td>
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input type="text" name="quantity"value="<?php echo $good['quantity'];?>" /></td>
+            <td><input type="text" name="quantity"value="<?php echo $good['quantity'];?>"required/></td>
         </tr>
         <tr>
             <td>Цена</td>
-            <td><input type="text" name="price" value="<?php echo $good['price'];?>"/></td>
+            <td><input type="text" name="price" value="<?php echo $good['price'];?>"required/></td>
         </tr>
         <tr>
             <td colspan="2" align="center"><input type="submit" value="Изменить" /></td>

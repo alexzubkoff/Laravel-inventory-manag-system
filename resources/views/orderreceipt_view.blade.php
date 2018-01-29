@@ -32,9 +32,15 @@
         @endforeach
 </table>
 <h3>Добавить приходный ордер</h3>
+<h4>Список товаров</h4>
 <form id = "orderreceipt" action="/orderreceipt/create" method="post">
     <input type="hidden" name="_token" value="<?php echo csrf_token() ?>">
     <table>
+        <tr>
+            {{--<td>Товары</td>--}}
+            <div id ="list" style="height: 100px; width :350px; border: double; margin-left: 8%;overflow: auto;"> </div>
+            <td><input id = "prodlist" type="hidden"  name="goodsarr" /></td>
+        </tr>
         <tr>
             <td>Поставщики</td>
             <td><select name="supplierslist" form="orderreceipt">
@@ -47,15 +53,16 @@
         <tr>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" /></td>
+            <td><input id="prodname" type="text" name="name" required/></td>
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input id = "quantity" type="number" min = "1" name="quantity" /></td>
+            <td><input id = "quantity" type="number" min = "1" name="quantity" required/></td>
         </tr>
         <tr>
             <td>Цена</td>
-            <td><input id = "price" type="number" min = "1" name="price" /></td>
+            <td><input id = "price" type="number" min = "1" name="price" required/></td>
+            <td colspan="2" align="center" ><input id="addgood"  type="submit" value="Добавить товар" /></td>
         </tr>
         <tr>
             <td colspan="2" align="center" ><input type="submit" value="Сохранить" /></td>
@@ -63,5 +70,29 @@
         </tr>
     </table>
 </form>
+<script type="text/javascript">
+    var goodsarrTotal = [];
+    var addprod = document.getElementById("addgood");
+    var inputName = document.getElementById("prodname");
+    var inputQuantity = document.getElementById("quantity");
+    var inputPrice = document.getElementById("price");
+    var prodlist = document.getElementById("prodlist");
+    var list = document.getElementById("list");
+
+    addprod.onclick = function () {
+        event.preventDefault();
+       var  goodsarr = { 'name' : inputName.value,
+                         'quantity' :   inputQuantity.value,
+                          'price'  : inputPrice.value};
+        goodsarrTotal.push(goodsarr);
+        document.getElementById("list").innerHTML = '<p>'+JSON.stringify(goodsarrTotal)+'<br></p>';
+        prodlist.value = JSON.stringify(goodsarrTotal);
+        inputName.value = '';
+        inputQuantity.value = '';
+        inputPrice.value = '';
+
+    }
+</script>
+
 </body>
 </html>

@@ -30,15 +30,15 @@
     <table>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" /></td>
+            <td><input type="text" name="name" required/></td>
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input type="number" min="1" name="quantity" /></td>
+            <td><input type="number" min="1" name="quantity" required/></td>
         </tr>
         <tr>
             <td>Цена</td>
-            <td><input type="number" min="0" name="price" /></td>
+            <td><input type="number" min="0" name="price" required/></td>
         </tr>
         <tr>
             <td colspan="2" align="center" ><input type="submit" value="Добавить" /></td>

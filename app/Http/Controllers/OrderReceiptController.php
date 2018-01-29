@@ -28,6 +28,9 @@ class OrderReceiptController extends Controller
     {
         $this->request = $request;
 
+        var_dump($this->request->goodsarr);
+        exit();
+
             DB::transaction(function () {
 
                 $good = DB::select('select * from goods where name=?',[$this->request->name]);
@@ -67,7 +70,6 @@ class OrderReceiptController extends Controller
         DB::transaction(function () {
             DB::delete('delete from purchases where id = ?',[$this->id]);
             DB::delete('delete from goods where id = ?',[$this->goodId]);
-
 
         });
 

@@ -17,19 +17,19 @@
         </tr>
         <tr>
             <td>Наименование</td>
-            <td><input type="text" name="name" value="<?php echo $counterparty['name'];?>"/></td>
+            <td><input type="text" name="name" value="<?php echo $counterparty['name'];?>" required/></td>
         </tr>
         <tr>
             <td>Телефон</td>
-            <td><input type="tel" name="phonenumber"value="<?php echo $counterparty['phonenumber'];?>" /></td>
+            <td><input type="tel" name="phonenumber"value="<?php echo $counterparty['phonenumber'];?>" required /></td>
         </tr>
         <tr>
             <td>e-mail</td>
-            <td><input type="email" name="email" value="<?php echo $counterparty['email'];?>"/></td>
+            <td><input type="email" name="email" value="<?php echo $counterparty['email'];?>" required/></td>
         </tr>
         <tr>
             <td colspan="2" align="center"><input type="submit" value="Изменить" /></td>
-            <td colspan="2" align="center" ><input id="cancel"  type="reset" value="Отменить" /></td>
+            <td colspan="2" align="center" ><input id="cancel"  type="reset" value="Отменить" required/></td>
         </tr>
     </table>
 </form>
