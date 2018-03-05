@@ -34,6 +34,7 @@
         <tr>
             <td>Наименование</td>
             <td><input id='auto' type="text" name="name"  required/></td>
+            <div></div>
         </tr>
         <tr>
             <td>Цена</td>
@@ -51,7 +52,7 @@
                 source: '{!!URL::route('autocomplete')!!}',
                 minlenght: 1,
                 autoFocus: true,
-                select: function (e, ui) {
+                success: function (e, ui) {
                     alert(ui);
                 }
             });

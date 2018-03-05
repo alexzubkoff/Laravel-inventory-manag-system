@@ -14,25 +14,21 @@ class GoodslistController extends Controller
 
     public function autocomplete(Request $request)
     {
-        $term=$request->term;
+            $term = $request->term;
 
-        $results = [];
+            $results = [];
 
-        $queries = DB::table('goodslist')
-            ->where('name', 'LIKE', '%'.$term.'%')
-            ->take(5)->get();
+            $queries = DB::table('goodslist')
+                ->where('name', 'LIKE', $term . '%')
+                ->take(5)->get();
 
-        foreach ($queries as $query)
-        {
-            $results[] = [ 'value' => $query->name ];
-        }
-        return Response::json($results);
+            foreach ($queries as $query) {
+                $results[] = [$query->name];
+            }
 
-        /*$goods = DB::select('select name from goodslist');
-
-        return json_encode($goods);
-        return redirect('/goodslist');*/
+            return json_encode($results);
     }
+
 
     public function create(Request $request)
     {
