@@ -58,7 +58,7 @@
         </tr>
         <tr>
             <td>Кол-во</td>
-            <td><input id = "quantity" type="number" min = "1" name="quantity" required /></td>
+            <td><input id = "quantity" type="number" min = "1" name="quantity"  /></td>
         </tr>
         <tr>
             <td>Цена</td>
@@ -67,7 +67,7 @@
 
         </tr>
         <tr>
-            <td colspan="2" align="center" ><input type="submit" value="Сохранить" /></td>
+            <td colspan="2" align="center" ><input id="sub" type="submit" value="Сохранить" /></td>
             <td colspan="2" align="center" ><input id="cancel"  type="reset" value="Отменить" /></td>
         </tr>
     </table>
@@ -96,6 +96,14 @@
         inputName.value = '';
         inputQuantity.value = '';
         inputPrice.value = '';
+    }
+
+    document.getElementById("sub").onclick = function (event) {
+        if (goodsarrTotal.length == 0){
+            event.preventDefault();
+        }else{
+            return true;
+        }
 
     }
 </script>

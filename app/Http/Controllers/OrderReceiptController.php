@@ -36,35 +36,61 @@ class OrderReceiptController extends Controller
 
                $goodsarr = json_decode($this->request->goodsarr, true);
 
-              if (!empty($goodsarr)) {
+              if (!empty($goodsarr) && is_array($goodsarr)) {
+
                   foreach ($goodsarr as $product){
-                      //echo $good['name'].$good['quantity'].$good['price'].'/n';
 
-                      $good = DB::select('select * from goods where name=?',[$product['name']]);
+                      $good = Good::updateOrCreate(
+                          ['name' => $product['name']],
+                          ['quantity' => $product['quantity'],'price' => $product['price']]
+                      );
 
-                      if (empty($good)){
-                          DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$product['name'], $product['quantity'],$product['price']]);
 
-                          $id = DB::select('SELECT MAX(id) as maxId FROM goods');
-                          $id = (array)$id[0];
 
-                          DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
-                              [$product['provider'],$id['maxId'],$product['quantity'], date("Y-m-d H:i:s")]);
+
+                      /*var_dump($product['name']);
+                      $goodExists = Good::where('name','=',$product['name'])->get();
+                      var_dump(empty($goodExists));
+                      exit();
+                      if (empty($goodExists)){
+
+                          $good = new Good;
+                          $good->name = $product['name'];
+
+
+                          $good->quantity =  $product['quantity'];
+                          $good->price = $product['price'];
+                          $good->save();
+                          $purchase = new Purchase;
+                          $purchase->counterpartyId = $product['provider'];
+                          $purchase->productId = $good->id;
+                          $purchase->purchaseQuantity = $product['quantity'];
+                          $purchase->purchaseDate = date("Y-m-d H:i:s");
+                          $purchase->save();
                       }else {
-                          $goodArr = (array)$good[0];
-                          $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
-                          DB::table('goods')
-                              ->where('id', $goodArr['id'])
-                              ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
-                          DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
-                          DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
-                              [$product['provider'],$goodArr['id'],(int)$goodArr['quantity'],$product['quantity'], date("Y-m-d H:i:s")]);
+                          $newProdBalanceQuantity = $goodExists->quantity + (int)$product['quantity'];
+                          $good = Good::where('id','=',$goodExists->id)->get();
+                          var_dump($good);
+                          $good->quantity = $newProdBalanceQuantity;
+                          var_dump($good->quantity);
+                          exit();
+                          $good->price = $this->request->price;
+                          $good->save();
 
-                      }
+                          $purchase = Purchase::where('productId','=',$goodExists->id)->get();
+                          $purchase->delete();
+
+                          $purchase = new Purchase;
+                          $purchase->counterpartyId = $product['provider'];
+                          $purchase->productId = $good->id;
+                          $purchase->stockBalance = $newProdBalanceQuantity;
+                          $purchase->purchaseQuantity = $product['quantity'];
+                          $purchase->purchaseDate = date("Y-m-d H:i:s");
+                          $purchase->save();
+                      }*/
                   }
               }else {
-
-                      $good = DB::select('select * from goods where name=?',[$this->request->name]);
+                      $good = Good::where('name','=',$this->request->name)->get();
 
                       if (empty($good)){
                           DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$this->request->name, $this->request->quantity,$this->request->price]);
@@ -100,9 +126,10 @@ class OrderReceiptController extends Controller
         $this->goodId = $productId;
 
         DB::transaction(function () {
-            DB::delete('delete from purchases where id = ?',[$this->id]);
-            DB::delete('delete from goods where id = ?',[$this->goodId]);
-
+            $purchase = Purchase::find($this->id);
+            $purchase->delete();
+            $good = Good::find($this->goodId);
+            $good->delete();
         });
 
             return redirect('/orderreceipt');

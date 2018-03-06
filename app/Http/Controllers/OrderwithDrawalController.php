@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
+use App\Counterparty;
+use App\Good;
+use App\Order;
 
 class OrderwithDrawalController extends Controller
 {
     private $request;
     private $id;
     private $goodId;
-    private $orderreceipt;
-    private $goodPrice;
 
     public function index()
     {
@@ -19,8 +20,10 @@ class OrderwithDrawalController extends Controller
                       counterparties.phonenumber,counterparties.email,orders.orderDate FROM goods
                       INNER JOIN orders ON goods.id=orders.productId INNER JOIN counterparties
                       ON orders.counterpartyId=counterparties.id ');
-        $suppliers = DB::select('select id,name from counterparties where type = "buyer"');
-        $goods = DB::select('SELECT goods.id,goods.name,goods.quantity FROM goods WHERE goods.quantity>0');
+
+        $suppliers = Counterparty::where('type','=','buyer')->get();
+        $goods = Good::where('quantity','>','0')->get();
+
         return view('orderwithdrawal_view',['orderwithdrawals'=>$orderwithdrawal,'suppliers'=>$suppliers,'goods'=>$goods]);
     }
 
@@ -60,8 +63,10 @@ class OrderwithDrawalController extends Controller
         $this->goodId = $goodid;
 
         DB::transaction(function () {
-                DB::delete('delete from orders where id = ?',[$this->id]);
-                DB::delete('delete from goods where id = ?',[$this->goodId]);
+                $order = Order::find($this->id);
+                $order->delete();
+                $good = Good::find($this->goodId);
+                $good->delete();
         });
 
         return redirect('/orderwithdrawal');
