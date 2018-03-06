@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
-
+use App\Good;
 
 
 class GoodsController extends Controller
@@ -11,33 +11,39 @@ class GoodsController extends Controller
 
     public function index()
     {
-        $goods = DB::select('select * from goods');
+        $goods = Good::all();
         return view('goods_view',['goods'=>$goods]);
     }
 
     public function create(Request $request)
     {
-
-        DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$request->name, $request->quantity,$request->price]);
+        $good = new Good;
+        $good->name = $request->name;
+        $good->quantity = $request->quantity;
+        $good->price = $request->price;
+        $good->save();
         return redirect('/goods');
     }
 
     public function update(Request $request,$id)
     {
         if ($request->method()=="GET"){
-            $good= DB::select('select * from goods where id = ?', [$id]);
-            return view('goods_update_view',['good'=>(array)$good[0]]);
+            $good= Good::find($id);
+            return view('goods_update_view',['good'=>$good]);
         }else{
-            DB::table('goods')
-                ->where('id', $request->input('id'))
-                ->update(['name' => $request->input('name'),'quantity' => $request->input('quantity'),'price' => $request->input('price')]);
+            $good= Good::find($id);
+            $good->name = $request->name;
+            $good->quantity = $request->quantity;
+            $good->price = $request->price;
+            $good->save();
             return redirect('/goods');
         }
     }
 
     public function delete($id)
     {
-        DB::delete('delete from goods where id = ?',[$id]);
+        $good= Good::find($id);
+        $good->delete();
         return redirect('/goods');
     }
 }

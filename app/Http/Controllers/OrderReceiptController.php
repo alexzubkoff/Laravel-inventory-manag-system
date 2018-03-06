@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
+use App\Counterparty;
+use App\Good;
+use App\Purchase;
 
 class OrderReceiptController extends Controller
 {
@@ -13,13 +16,14 @@ class OrderReceiptController extends Controller
     public function index()
     {
         $orderreceipts = DB::select('
-                                SELECT purchases.id as purchaseId,goods.id as productId,goods.name as productName,goods.price,purchases.stockBalance,purchases.purchaseQuantity,counterparties.name as provider,
+                                SELECT purchases.id as purchaseId,goods.id as productId,goods.name as productName,
+                                goods.price,purchases.stockBalance,purchases.purchaseQuantity,counterparties.name as provider,
                                 counterparties.phonenumber,counterparties.email,purchases.purchaseDate FROM goods
                                 INNER JOIN purchases ON goods.id=purchases.productId INNER JOIN counterparties
                                 ON purchases.counterpartyId=counterparties.id 
                                  ');
 
-        $suppliers = DB::select('select id,name from counterparties where type = "provider"');
+        $suppliers = Counterparty::where('type','=','provider')->get();
 
         return view('orderreceipt_view',['orderreceipts'=>$orderreceipts,'suppliers'=>$suppliers]);
     }
@@ -82,9 +86,6 @@ class OrderReceiptController extends Controller
 
                       }
               }
-
-
-
 
 
             });

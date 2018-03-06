@@ -3,40 +3,46 @@
 namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
+use App\Counterparty;
 
 class CounterpartiesController extends Controller
 {
     public function index()
     {
-        $counterparties = DB::select('select * from counterparties');
+        $counterparties = Counterparty::all();
         return view('counterparties_view',['counterparties'=>$counterparties]);
     }
     public function create(Request $request)
     {
-            DB::insert('insert into counterparties (type,name,phonenumber,email) values (?, ?,?,?)', [$request->type, $request->name,$request->phonenumber,$request->email]);
+            $counterparty = new Counterparty;
+            $counterparty->type = $request->type;
+            $counterparty->name = $request->name;
+            $counterparty->phonenumber = $request->phonenumber;
+            $counterparty->email = $request->email;
+            $counterparty->save();
             return redirect('/counterparties');
     }
 
     public function update(Request $request,$id)
     {
         if ($request->method()=="GET"){
-            $counterparty= DB::select('select * from counterparties where id = ?', [$id]);
-            return view('counterparties_update_view',['counterparty'=>(array)$counterparty[0]]);
+            $counterparty= Counterparty::find($id);
+            return view('counterparties_update_view',['counterparty'=>$counterparty]);
         }else{
-            $type = (string)$request->input('type');
-            $name = (string)$request->input('name');
-            $phonenumber = (string)$request->input('phonenumber');
-            $email = (string)$request->input('email');
-            DB::table('counterparties')
-                ->where('id', $id)
-                ->update(['type' => $type,'name' => $name,'phonenumber' => $phonenumber,'email' => $email]);
+            $counterparty= Counterparty::find($id);
+            $counterparty->type = $request->type;
+            $counterparty->name = $request->name;
+            $counterparty->phonenumber = $request->phonenumber;
+            $counterparty->email = $request->email;
+            $counterparty->save();
             return redirect('/counterparties');
         }
     }
 
     public function delete($id)
     {
-        DB::delete('delete from counterparties where id = ?',[$id]);
+        $counterparty= Counterparty::find($id);
+        $counterparty->delete();
         return redirect('/counterparties');
     }
 }
