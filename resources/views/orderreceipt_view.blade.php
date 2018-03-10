@@ -98,14 +98,14 @@
         inputPrice.value = '';
     }
 
-    document.getElementById("sub").onclick = function (event) {
+   /* document.getElementById("sub").onclick = function (event) {
         if (goodsarrTotal.length == 0){
             event.preventDefault();
         }else{
             return true;
         }
 
-    }
+    }*/
 </script>
 
 </body>

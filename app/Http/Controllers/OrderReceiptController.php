@@ -36,31 +36,19 @@ class OrderReceiptController extends Controller
 
                $goodsarr = json_decode($this->request->goodsarr, true);
 
-              if (!empty($goodsarr) && is_array($goodsarr)) {
+              if (!empty($goodsarr)) {
 
                   foreach ($goodsarr as $product){
 
-                      $good = Good::updateOrCreate(
-                          ['name' => $product['name']],
-                          ['quantity' => $product['quantity'],'price' => $product['price']]
-                      );
+                      $goodsExists = Good::where('name','=',$product['name'])->get()->first();
 
-
-
-
-                      /*var_dump($product['name']);
-                      $goodExists = Good::where('name','=',$product['name'])->get();
-                      var_dump(empty($goodExists));
-                      exit();
-                      if (empty($goodExists)){
-
+                      if (empty($goodsExists)){
                           $good = new Good;
                           $good->name = $product['name'];
-
-
                           $good->quantity =  $product['quantity'];
                           $good->price = $product['price'];
                           $good->save();
+
                           $purchase = new Purchase;
                           $purchase->counterpartyId = $product['provider'];
                           $purchase->productId = $good->id;
@@ -68,48 +56,54 @@ class OrderReceiptController extends Controller
                           $purchase->purchaseDate = date("Y-m-d H:i:s");
                           $purchase->save();
                       }else {
-                          $newProdBalanceQuantity = $goodExists->quantity + (int)$product['quantity'];
-                          $good = Good::where('id','=',$goodExists->id)->get();
-                          var_dump($good);
-                          $good->quantity = $newProdBalanceQuantity;
-                          var_dump($good->quantity);
-                          exit();
-                          $good->price = $this->request->price;
+                          $good = Good::find($goodsExists->id);
+                          $good->quantity = $goodsExists->quantity + $product['quantity'];
+                          $good->price = $product['price'];
                           $good->save();
 
-                          $purchase = Purchase::where('productId','=',$goodExists->id)->get();
+                          $purchase = Purchase::where('productId','=',$goodsExists->id)->get()->first();
                           $purchase->delete();
 
                           $purchase = new Purchase;
                           $purchase->counterpartyId = $product['provider'];
                           $purchase->productId = $good->id;
-                          $purchase->stockBalance = $newProdBalanceQuantity;
+                          $purchase->stockBalance = $good->quantity;
                           $purchase->purchaseQuantity = $product['quantity'];
                           $purchase->purchaseDate = date("Y-m-d H:i:s");
                           $purchase->save();
-                      }*/
+                      }
                   }
               }else {
-                      $good = Good::where('name','=',$this->request->name)->get();
+                      $goodsExists = Good::where('name','=',$this->request->name)->get()->first();
+                      if (empty($goodsExists)){
+                          $good = new Good;
+                          $good->name = $this->request->name;
+                          $good->quantity =   $this->request->quantity;
+                          $good->price = $this->request->price;
+                          $good->save();
 
-                      if (empty($good)){
-                          DB::insert('insert into goods (name,quantity,price) values (?, ?,?)',[$this->request->name, $this->request->quantity,$this->request->price]);
-
-                          $id = DB::select('SELECT MAX(id) as maxId FROM goods');
-                          $id = (array)$id[0];
-
-                          DB::insert('insert into purchases (counterpartyId,productId,purchaseQuantity,purchaseDate) values (?, ?, ? ,? )',
-                              [$this->request->input("supplierslist"),$id['maxId'],$this->request->quantity, date("Y-m-d H:i:s")]);
+                          $purchase = new Purchase;
+                          $purchase->counterpartyId = $this->request->input("supplierslist");
+                          $purchase->productId = $good->id;
+                          $purchase->purchaseQuantity = $this->request->quantity;
+                          $purchase->purchaseDate = date("Y-m-d H:i:s");
+                          $purchase->save();
                       }else {
-                          $goodArr = (array)$good[0];
-                          $newProdBalanceQuantity = (int)$goodArr['quantity'] + (int)$this->request->input("quantity");
-                          DB::table('goods')
-                              ->where('id', $goodArr['id'])
-                              ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
-                          DB::delete('delete from purchases where productId = ?',[ $goodArr['id']]);
-                          DB::insert('insert into purchases (counterpartyId,productId,stockBalance,purchaseQuantity,purchaseDate) values (?, ?, ? ,?,? )',
-                              [$this->request->input("supplierslist"),$goodArr['id'],(int)$goodArr['quantity'],$this->request->quantity, date("Y-m-d H:i:s")]);
+                          $good = Good::find($goodsExists->id);
+                          $good->quantity = $goodsExists->quantity + $this->request->quantity;
+                          $good->price = $this->request->price;
+                          $good->save();
 
+                          $purchase = Purchase::where('productId','=',$goodsExists->id)->get()->first();
+                          $purchase->delete();
+
+                          $purchase = new Purchase;
+                          $purchase->counterpartyId = $this->request->input("supplierslist");
+                          $purchase->productId = $good->id;
+                          $purchase->stockBalance = $good->quantity;
+                          $purchase->purchaseQuantity = $this->request->quantity;
+                          $purchase->purchaseDate = date("Y-m-d H:i:s");
+                          $purchase->save();
                       }
               }
 

@@ -33,23 +33,34 @@ class OrderwithDrawalController extends Controller
 
         DB::transaction(function () {
 
-            $good = DB::select('select * from goods where id=?',[$this->request->input('goodslist')]);
+            $good = Good::find($this->request->input('goodslist'));
 
-                $goodArr = (array)$good[0];
-                if ($goodArr['quantity']>=$this->request->input("quantity")){
-                    $newProdBalanceQuantity = (int)$goodArr['quantity'] - (int)$this->request->input("quantity");
-                    DB::table('goods')
-                        ->where('id', $goodArr['id'])
-                        ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
-                        DB::insert('insert into orders (counterpartyId,productId,stockBalance,orderQuantity,orderDate) values (?, ?, ? ,?,?)',
-                        [$this->request->input("supplierslist"),$this->request->input('goodslist'),$goodArr['quantity'], $this->request->quantity,date("Y-m-d H:i:s")]);
+                if ($good->quantity >= $this->request->input("quantity")){
+                    $newProdBalanceQuantity = $good->quantity - (int)$this->request->input("quantity");
+                    $good->quantity = $newProdBalanceQuantity;
+                    $good->price = $this->request->price;
+                    $good->save();
+
+                    $order = new Order;
+                    $order->counterpartyId = $this->request->input("supplierslist");
+                    $order->productId = $this->request->input('goodslist');
+                    $order->stockBalance = $newProdBalanceQuantity;
+                    $order->orderQuantity = $this->request->quantity;
+                    $order->orderDate = date("Y-m-d H:i:s");
+                    $order->save();
                 }else{
-                    $newProdBalanceQuantity = (int)$goodArr['quantity']-(int)$goodArr['quantity'];
-                    DB::table('goods')
-                        ->where('id', $goodArr['id'])
-                        ->update(['quantity' => $newProdBalanceQuantity,'price' => $this->request->price]);
-                    DB::insert('insert into orders (counterpartyId,productId,stockBalance,orderQuantity,orderDate) values (?, ?, ? ,?,?)',
-                        [$this->request->input("supplierslist"),$this->request->input('goodslist'),$goodArr['quantity'], $this->request->quantity,date("Y-m-d H:i:s")]);
+                    $newProdBalanceQuantity = $good->quantity - $good->quantity;
+                    $good->quantity = $newProdBalanceQuantity;
+                    $good->price = $this->request->price;
+                    $good->save();
+
+                    $order = new Order;
+                    $order->counterpartyId = $this->request->input("supplierslist");
+                    $order->productId = $this->request->input('goodslist');
+                    $order->stockBalance = $newProdBalanceQuantity;
+                    $order->orderQuantity = $this->request->quantity;
+                    $order->orderDate = date("Y-m-d H:i:s");
+                    $order->save();
                 }
 
         });
