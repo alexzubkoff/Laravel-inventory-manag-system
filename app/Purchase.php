@@ -22,5 +22,5 @@ class Purchase extends Model
     {
         return $this->hasOne('App\Counterparty','counterpartyId');
     }
-
+      // delete Entrust with JWT
 }
