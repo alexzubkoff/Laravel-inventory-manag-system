@@ -3,11 +3,12 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+//use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Eloquent
 {
-    use Notifiable;
+    //use Notifiable
+    use Authenticatable, CanResetPassword, EntrustUserTrait;
 
     /**
      * The attributes that are mass assignable.
